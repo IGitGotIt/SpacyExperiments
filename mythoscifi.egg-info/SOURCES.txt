@@ -1,0 +1,11 @@
+setup.py
+mythoscifi/__init__.py
+mythoscifi/cli.py
+mythoscifi/database.py
+mythoscifi/name_generator.py
+mythoscifi.egg-info/PKG-INFO
+mythoscifi.egg-info/SOURCES.txt
+mythoscifi.egg-info/dependency_links.txt
+mythoscifi.egg-info/entry_points.txt
+mythoscifi.egg-info/requires.txt
+mythoscifi.egg-info/top_level.txt

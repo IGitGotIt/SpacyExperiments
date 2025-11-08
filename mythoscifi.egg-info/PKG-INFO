@@ -1,0 +1,274 @@
+Metadata-Version: 2.4
+Name: mythoscifi
+Version: 0.1.0
+Summary: Generate unique names by blending Greek mythology and sci-fi robot characters
+Home-page: https://github.com/yourusername/mythoscifi
+Author: Your Name
+Author-email: your.email@example.com
+Classifier: Programming Language :: Python :: 3
+Classifier: License :: OSI Approved :: MIT License
+Classifier: Operating System :: OS Independent
+Requires-Python: >=3.9
+Description-Content-Type: text/markdown
+Requires-Dist: chromadb>=1.3.0
+Requires-Dist: requests>=2.28.0
+Requires-Dist: beautifulsoup4>=4.11.0
+Requires-Dist: kagglehub>=0.1.0
+Requires-Dist: pandas>=1.5.0
+Provides-Extra: dev
+Requires-Dist: pytest>=7.0; extra == "dev"
+Requires-Dist: black>=22.0; extra == "dev"
+Requires-Dist: flake8>=5.0; extra == "dev"
+Dynamic: author
+Dynamic: author-email
+Dynamic: classifier
+Dynamic: description
+Dynamic: description-content-type
+Dynamic: home-page
+Dynamic: provides-extra
+Dynamic: requires-dist
+Dynamic: requires-python
+Dynamic: summary
+
+# MythoSciFi
+
+Generate unique, pronounceable names by blending Greek mythology and sci-fi robot characters using semantic vector search.
+
+## Features
+
+- **Vector Database**: Store 1,700+ characters (Greek mythology + sci-fi robots) in ChromaDB
+- **Semantic Search**: Find characters by meaning, not just keywords
+- **Name Generation**: Create unique blended names like "Cerebrolles" (Achilles + Cerebro)
+- **Query-Guided**: Generate names relevant to specific themes
+
+## Installation
+
+### From Source
+
+```bash
+# Clone or copy the package
+cd /path/to/SpacyExperiments
+
+# Install in development mode
+pip install -e .
+
+# Or install directly
+pip install .
+```
+
+### As a Package in Another Project
+
+```bash
+# Install from local directory
+pip install /Users/jaideep/Documents/AIProjects/SpacyExperiments
+
+# Or if you publish to PyPI later
+pip install mythoscifi
+```
+
+## Quick Start
+
+### Using as a Library
+
+```python
+from mythoscifi import CharacterDatabase, NameGenerator
+
+# Initialize and populate database (first time only)
+db = CharacterDatabase(persist_directory="./my_chroma_db")
+db.initialize()
+
+# Populate with data (only needed once)
+# db.populate()  # Uncomment to fetch and store data
+
+# Search for characters
+results = db.search("goddess of wisdom", n_results=5)
+for r in results:
+    print(f"{r['name']} ({r['category']}): {r['similarity']:.3f}")
+
+# Generate blended names
+generator = NameGenerator(db)
+names = generator.generate(query="powerful warrior", top_n=5)
+
+for i, name in enumerate(names, 1):
+    print(f"{i}. {name['name']}")
+    print(f"   From: {name['source_myth']} + {name['source_robot']}")
+    print(f"   Score: {name['creativity_score']:.1f}")
+```
+
+### Using Command Line Tools (if installed)
+
+```bash
+# Populate database
+mythoscifi-populate
+
+# Search characters
+mythoscifi-search "goddess of love"
+
+# Generate names
+mythoscifi-generate "intelligent robot"
+```
+
+## API Reference
+
+### CharacterDatabase
+
+```python
+db = CharacterDatabase(persist_directory="./chroma_db")
+
+# Initialize connection
+db.initialize()
+
+# Populate with data (first time only)
+db.populate(fetch_robots=True, fetch_mythology=True)
+
+# Search
+results = db.search(query="hero", n_results=5, filter_category="mythology")
+
+# Get random characters
+chars = db.get_random_characters(category="robot", limit=50)
+
+# Get statistics
+stats = db.get_stats()  # {'total': 1702, 'robots': 626, 'mythology': 1076}
+```
+
+### NameGenerator
+
+```python
+generator = NameGenerator(database)
+
+# Generate names
+names = generator.generate(
+    query="brave warrior",  # Optional: theme-based generation
+    num_samples=100,         # Number of character pairs to try
+    top_n=5                  # Number of results to return
+)
+
+# Each result contains:
+# - name: The blended name
+# - source_myth: Source mythology character
+# - source_robot: Source robot character
+# - creativity_score: Creativity score
+# - semantic_matches: Similar characters from DB
+# - query_match: Whether it matches the query (if query provided)
+```
+
+## Using in Another Project
+
+### Example: Flask Web App
+
+```python
+# app.py
+from flask import Flask, jsonify, request
+from mythoscifi import CharacterDatabase, NameGenerator
+
+app = Flask(__name__)
+
+# Initialize once at startup
+db = CharacterDatabase(persist_directory="./data/chroma_db")
+db.initialize()
+generator = NameGenerator(db)
+
+@app.route('/search')
+def search():
+    query = request.args.get('q', '')
+    results = db.search(query, n_results=10)
+    return jsonify(results)
+
+@app.route('/generate')
+def generate():
+    query = request.args.get('q', None)
+    names = generator.generate(query=query, top_n=5)
+    return jsonify(names)
+
+if __name__ == '__main__':
+    app.run()
+```
+
+### Example: Data Analysis Script
+
+```python
+# analysis.py
+from mythoscifi import CharacterDatabase
+import pandas as pd
+
+# Load database
+db = CharacterDatabase()
+db.initialize()
+
+# Get all mythology characters
+myths = db.get_random_characters(category="mythology", limit=1000)
+
+# Convert to DataFrame for analysis
+df = pd.DataFrame(myths)
+print(df.head())
+
+# Find all gods
+gods = db.search("god deity divine", n_results=20, filter_category="mythology")
+for god in gods:
+    print(f"{god['name']}: {god['description'][:100]}")
+```
+
+### Example: Game Character Generator
+
+```python
+# game.py
+from mythoscifi import CharacterDatabase, NameGenerator
+
+class CharacterCreator:
+    def __init__(self):
+        self.db = CharacterDatabase()
+        self.db.initialize()
+        self.generator = NameGenerator(self.db)
+
+    def create_character(self, character_type):
+        """Generate a unique character based on type."""
+        type_queries = {
+            'warrior': 'brave fighter warrior',
+            'mage': 'wise magical sorcerer',
+            'rogue': 'cunning thief stealth',
+            'tank': 'strong defender guardian'
+        }
+
+        query = type_queries.get(character_type, 'hero')
+        names = self.generator.generate(query=query, top_n=3)
+
+        return {
+            'name': names[0]['name'],
+            'class': character_type,
+            'lore': f"Born from {names[0]['source_myth']} and {names[0]['source_robot']}"
+        }
+
+# Usage
+creator = CharacterCreator()
+warrior = creator.create_character('warrior')
+print(f"Name: {warrior['name']}")
+print(f"Lore: {warrior['lore']}")
+```
+
+## Project Structure
+
+```
+SpacyExperiments/
+├── mythoscifi/              # Main package
+│   ├── __init__.py         # Package initialization
+│   ├── database.py         # Database management
+│   ├── name_generator.py   # Name generation logic
+│   └── cli.py              # Command-line tools (optional)
+├── setup.py                # Installation configuration
+├── requirements.txt        # Dependencies
+├── README_PACKAGE.md       # This file
+└── chroma_db/             # Database storage (created on first run)
+```
+
+## Data Sources
+
+- **Sci-Fi Robots**: Wikipedia's List of Fictional Robots and Androids
+- **Greek Mythology**: Kaggle's Greek Mythology Network Data
+
+## License
+
+MIT License
+
+## Contributing
+
+Contributions welcome! Feel free to submit issues or pull requests.

@@ -1,0 +1,4 @@
+[console_scripts]
+mythoscifi-generate = mythoscifi.cli:generate_names
+mythoscifi-populate = mythoscifi.cli:populate_database
+mythoscifi-search = mythoscifi.cli:search_characters

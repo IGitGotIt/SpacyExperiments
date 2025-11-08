@@ -1,0 +1,38 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(python3 -m venv venv)",
+      "Bash(source venv/bin/activate)",
+      "Bash(pip install --upgrade pip)",
+      "Bash(pip install spacy pandas scikit-learn)",
+      "Bash(python -m spacy download en_core_web_sm)",
+      "Bash(python -c \"import spacy, pandas, sklearn; print(''All packages imported successfully!''); print(f''spaCy version: {spacy.__version__}''); print(f''pandas version: {pandas.__version__}''); print(f''scikit-learn version: {sklearn.__version__}'')\")",
+      "Bash(mkdir pandasExp)",
+      "Bash(pip install kagglehub)",
+      "Bash(source ../venv/bin/activate)",
+      "Bash(python greek_mythology_data.py)",
+      "Bash(python pandasExp/greek_mythology_data.py)",
+      "Bash(python SpacyScifi.py)",
+      "Bash(pip install requests beautifulsoup4)",
+      "Bash(pip install chromadb)",
+      "Bash(python test_chroma.py)",
+      "Bash(python store_in_chroma.py)",
+      "Bash(python query_chroma.py)",
+      "Bash(python query_chroma.py \"friendly companion robot from star wars\")",
+      "Bash(python store_both_in_chroma.py)",
+      "Bash(python query_both.py \"Zeus\")",
+      "Bash(python query_both.py \"robot: terminator style killer\")",
+      "Bash(python query_both.py \"mythology: goddess of love and beauty\")",
+      "Bash(python generate_blended_names.py)",
+      "Bash(python generate_blended_names.py \"powerful warrior hero\")",
+      "Bash(python generate_blended_names.py \"goddess of wisdom\")",
+      "Bash(python generate_blended_names.py \"intelligent robot\")",
+      "Bash(python example_usage.py)",
+      "Bash(python test_mythoscifi.py)",
+      "Bash(python CntVector.py)",
+      "Bash(pip install matplotlib seaborn)"
+    ],
+    "deny": [],
+    "ask": []
+  }
+}
